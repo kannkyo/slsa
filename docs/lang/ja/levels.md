@@ -50,12 +50,12 @@ SLSA レベルは推移的ではありません([FAQ](faq.md)を参照)。
 | ビルド - [独立性]               |        |        | ✓       | ✓      |
 | ビルド - [パラメータレス]       |        |        |         | ✓      |
 | ビルド - [密封性]               |        |        |         | ✓      |
-| ビルド - [再現可能性]           |        |        |         | ○      |
+| ビルド - [再現性]               |        |        |         | ○      |
 | 来歴 - [可用性]                 | ✓      | ✓      | ✓       | ✓      |
 | 来歴 - [認証済]                 |        | ✓      | ✓       | ✓      |
 | 来歴 - [生成のサービス化]       |        | ✓      | ✓       | ✓      |
 | 来歴 - [反証不可能性]           |        |        | ✓       | ✓      |
-| 来歴 - [依存関係が完了しました] |        |        |         | ✓      |
+| 来歴 - [依存関係の解消]         |        |        |         | ✓      |
 | 共通 - [セキュリティ]           |        |        |         | ✓      |
 | 共通 - [アクセス]               |        |        |         | ✓      |
 | 共通 - [スーパーユーザー]       |        |        |         | ✓      |
@@ -68,13 +68,13 @@ _○=正当な理由がない限り必須_
 [可用性]: requirements.md#available
 [ビルドのコード管理]: requirements.md#build-as-code
 [ビルドのサービス化]: requirements.md#build-service
-[依存関係が完了しました]: requirements.md#dependencies-complete
+[依存関係の解消]: requirements.md#dependencies-complete
 [エフェメラル環境]: requirements.md#ephemeral-environment
 [密封性]: requirements.md#hermetic
 [独立性]: requirements.md#isolated
 [反証不可能性]: requirements.md#non-falsifiable
 [パラメータレス]: requirements.md#parameterless
-[再現可能性]: requirements.md#reproducible
+[再現性]: requirements.md#reproducible
 [無期限保持]: requirements.md#retained-indefinitely
 [ビルドのスクリプト化]: requirements.md#scripted-build
 [セキュリティ]: requirements.md#security
