@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+{%- assign language = page.language | default: site.language | default: "en" -%}
+<html lang="{{ language }}">
 
   {%- include head.html -%}
 
@@ -10,7 +11,7 @@
   >
     {%- include aside.html -%}
     <div class="site-main">
-      {%- include header.html -%}
+      {%- include header.html language=language -%}
       <main class="site-clamp site-content has-toc" aria-label="Content">
         <aside class="table-of-contents flex flex-col">
           {% include toc.html html=content %}
