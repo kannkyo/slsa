@@ -61,3 +61,6 @@ defaults:
     values:
       # Set the Social image icon
       image: /images/icons/android-chrome-192x192.png
+languages:
+  en: English
+  ja: 日本語
