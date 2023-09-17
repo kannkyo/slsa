@@ -1,215 +1,215 @@
 ---
-title: Producing artifacts
-description: This page covers the detailed technical requirements for producing artifacts at each SLSA level. The intended audience is platform implementers and security engineers.
+title: 工芸品の制作
+description: このページでは、各 SLSA レベルでアーティファクトを生成するための詳細な技術要件について説明します。対象読者は、プラットフォーム実装者とセキュリティ エンジニアです。
 ---
 
 
-This page covers the detailed technical requirements for producing artifacts at each SLSA level. The intended audience is platform implementers and security engineers.
+このページでは、各 SLSA レベルでアーティファクトを生成するための詳細な技術要件について説明します。対象読者は、プラットフォーム実装者とセキュリティ エンジニアです。
 
-For an informative description of the levels intended for all audiences, see [Levels](levels.md). For background, see [Terminology](terminology.md). To better understand the reasoning behind the requirements, see [Threats and mitigations](threats.md).
+すべての対象者を対象としたレベルの有益な説明については、[レベル](levels.md) を参照してください。背景については、[用語](terminology.md)を参照してください。要件の背後にある理由をよりよく理解するには、[脅威と緩和策](threats.md) を参照してください。
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+この文書のキーワード「しなければならない」、「してはならない」、「必須」、「しなければならない」、「してはならない」、「すべきである」、「すべきではない」、「推奨」、「してもよい」、「任意」は次のとおりです。 [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) に記載されているように解釈されます。
 
-## Overview
+## 概要
 
-### Build levels
+### ビルドレベル
 
-In order to produce artifacts with a specific build level, responsibility is split between the [Producer] and [Build platform]. The build platform MUST strengthen the security controls in order to achieve a specific level while the producer MUST choose and adopt a build platform capable of achieving a desired build level, implementing any controls as specified by the chosen platform.
+特定のビルド レベルのアーティファクトを生成するには、[プロデューサー] と [ビルド プラットフォーム] の間で責任が分担されます。ビルド プラットフォームは、特定のレベルを達成するためにセキュリティ制御を強化しなければなりません (MUST)。一方、プロデューサーは、希望のビルド レベルを達成できるビルド プラットフォームを選択して採用し、選択したプラットフォームで指定された制御を実装しなければなりません (MUST)。
 
 <table class="no-alternate">
 <tr>
-  <th>Implementer
-  <th>Requirement
-  <th>Degree
+  <th>実装担当者
+  <th>要件
+  <th>学位
   <th>L1<th>L2<th>L3
 <tr>
-  <td rowspan=3><a href="#producer">Producer</a>
-  <td colspan=2><a href="#choose-an-appropriate-build-platform">Choose an appropriate build platform</a>
+  <td rowspan=3><a href="#producer">プロデューサー</a>
+  <td colspan=2><a href="#choose-an-appropriate-build-platform">適切なビルド プラットフォームを選択する</a>
   <td>✓<td>✓<td>✓
 <tr>
-  <td colspan=2><a href="#follow-a-consistent-build-process">Follow a consistent build process</a>
+  <td colspan=2><a href="#follow-a-consistent-build-process">一貫したビルド プロセスに従う</a>
   <td>✓<td>✓<td>✓
 <tr>
-  <td colspan=2><a href="#distribute-provenance">Distribute provenance</a>
+  <td colspan=2><a href="#distribute-provenance">来歴を配布する</a>
   <td>✓<td>✓<td>✓
 <tr>
-  <td rowspan=5><a href="#build-platform">Build platform</a>
-  <td rowspan=3><a href="#provenance-generation">Provenance generation</a>
-  <td><a href="#provenance-exists">Exists</a>
+  <td rowspan=5><a href="#build-platform">ビルド プラットフォーム</a>
+  <td rowspan=3><a href="#provenance-generation">来歴の生成</a>
+  <td><a href="#provenance-exists">存在する</a>
   <td>✓<td>✓<td>✓
 <tr>
-  <td><a href="#provenance-authentic">Authentic</a>
+  <td><a href="#provenance-authentic">真正である</a>
   <td> <td>✓<td>✓
 <tr>
-  <td><a href="#provenance-unforgeable">Unforgeable</a>
+  <td><a href="#provenance-unforgeable">偽造不可能である</a>
   <td> <td> <td>✓
 <tr>
-  <td rowspan=2><a href="#isolation-strength">Isolation strength</a>
-  <td><a href="#hosted">Hosted</a>
+  <td rowspan=2><a href="#isolation-strength">分離の強度</a>
+  <td><a href="#hosted">ホストされた</a>
   <td> <td>✓<td>✓
 <tr>
-  <td><a href="#isolated">Isolated</a>
+  <td><a href="#isolated">分離された</a>
   <td> <td> <td>✓
 </table>
 
-### Security Best Practices
+### セキュリティのベストプラクティス
 
-While the exact definition of what constitutes a secure platform is beyond the scope of this specification, all implementations MUST use industry security best practices to be conformant to this specification. This includes, but is not limited to, using proper access controls, securing communications, implementing proper management of cryptographic secrets, doing frequent updates, and promptly fixing known vulnerabilities.
+安全なプラットフォームを構成するものの正確な定義はこの仕様の範囲を超えていますが、すべての実装は、この仕様に準拠するために業界のセキュリティのベスト プラクティスを使用しなければなりません。これには、適切なアクセス制御の使用、通信の保護、暗号秘密の適切な管理の実装、頻繁な更新の実行、既知の脆弱性の迅速な修正が含まれますが、これらに限定されません。
 
-Various relevant standards and guides can be consulted for that matter such as the [CIS Critical Security Controls](https://www.cisecurity.org/controls/cis-controls-list).
+この問題については、[CIS Critical Security Controls](https://www.cisecurity.org/controls/cis-controls-list) などのさまざまな関連規格やガイドを参照できます。
 
-## Producer
+## プロデューサー
 
-[Producer]: #producer
+[プロデューサー]: #producer
 
-A package's <dfn>producer</dfn> is the organization that owns and releases the software. It might be an open-source project, a company, a team within a company, or even an individual.
+パッケージの<dfn>プロデューサー</dfn>は、ソフトウェアを所有し、リリースする組織です。それは、オープンソース プロジェクト、企業、企業内のチーム、さらには個人の場合もあります。
 
-NOTE: There were more requirements for producers in the initial [draft version (v0.1)](../v0.1/requirements.md#scripted-build) which impacted how a package can be built. These were removed in the v1.0 specification and will be reassessed and re-added as indicated in the [future directions](future-directions.md).
+注: 初期の [ドラフト バージョン (v0.1)](../v0.1/requirements.md#scripted-build) には、プロデューサーに対する追加の要件があり、パッケージのビルド方法に影響を与えていました。これらは v1.0 仕様で削除され、[将来の方向性](future-directions.md) に示されているように再評価され、再追加される予定です。
 
-### Choose an appropriate build platform
+### 適切なビルド プラットフォームを選択する
 
-The producer MUST select a build platform that is capable of reaching their desired SLSA Build Level.
+プロデューサーは、希望する SLSA ビルド レベルに到達できるビルド プラットフォームを選択しなければなりません。
 
-For example, if a producer wishes to produce a Build Level 3 artifact, they MUST choose a builder capable of producing Build Level 3 provenance.
+たとえば、プロデューサーがビルド レベル 3 のアーティファクトを生成したい場合、ビルド レベル 3 の来歴を生成できるビルダーを選択しなければなりません。
 
-### Follow a consistent build process
+### 一貫したビルドプロセスに従う
 
-The producer MUST build their artifact in a consistent manner such that verifiers can form expectations about the build process. In some implemenatations, the producer MAY provide explicit metadata to a verifier about their build process. In others, the verifier will form their expectations implicitly (e.g. trust on first use).
+プロデューサーは、検証者がビルド プロセスについての期待を形成できるように、一貫した方法でアーティファクトをビルドしなければなりません (MUST)。一部の実装では、プロデューサーは、ビルドプロセスに関する明示的なメタデータを検証者に提供してもよい(MAY)。他の場合には、検証者は暗黙的に期待を形成します (例: 最初の使用時の信頼)。
 
-If a producer wishes to distribute their artifact through a [package ecosystem] that requires explicit metadata about the build process in the form of a configuration file, the producer MUST complete the configuration file and keep it up to date. This metadata might include information related to the artifact's source repository and build parameters.
+プロデューサーが、構成ファイルの形式でビルドプロセスに関する明示的なメタデータを必要とする [パッケージエコシステム] を通じてアーティファクトを配布したい場合、プロデューサーは構成ファイルを完成させ、最新の状態に保たなければなりません (MUST)。このメタデータには、アーティファクトのソース リポジトリおよびビルド パラメータに関連する情報が含まれる場合があります。
 
-### Distribute provenance
+### 来歴を配布する
 
-The producer MUST distribute provenance to artifact consumers. The producer MAY delegate this responsibility to the [package ecosystem], provided that the package ecosystem is capable of distributing provenance.
+生産者は、アーティファクトの消費者に来歴を配布しなければなりません (MUST)。パッケージ エコシステムが来歴を配布できる場合、プロデューサーはこの責任を [パッケージ エコシステム] に委任することができます。
 
-## Build Platform
+## プラットフォームを構築する
 
-[Build platform]: #build-platform
+[ビルドプラットフォーム]: #build-platform
 
-A package's <dfn>build platform</dfn> is the infrastructure used to transform the software from source to package. This includes the transitive closure of all hardware, software, persons, and organizations that can influence the build. A build platform is often a hosted, multi-tenant build service, but it could be a system of multiple independent rebuilders, a special-purpose build platform used by a single software project, or even an individual's workstation. Ideally, one build platform is used by many different software packages so that consumers can [minimize the number of trusted platforms](principles.md). For more background, see [Build Model](terminology.md#build-model).
+パッケージの <dfn>ビルド プラットフォーム</dfn> は、ソフトウェアをソースからパッケージに変換するために使用されるインフラストラクチャです。これには、ビルドに影響を与える可能性のあるすべてのハードウェア、ソフトウェア、個人、および組織の推移的閉包が含まれます。ビルド プラットフォームは、ホストされたマルチテナント ビルド サービスであることがよくありますが、複数の独立したリビルダーのシステム、単一のソフトウェア プロジェクトで使用される専用のビルド プラットフォーム、さらには個人のワークステーションである場合もあります。理想的には、消費者が [信頼できるプラットフォームの数を最小限に抑える] (principles.md) ことができるように、1 つのビルド プラットフォームが多くの異なるソフトウェア パッケージで使用されます。詳細については、「モデルの構築」(terminology.md#build-model) を参照してください。
 
-The build platform is responsible for providing two things: [provenance generation] and [isolation between builds]. The [Build level](levels.md#build-track) describes the degree to which each of these properties is met.
+ビルド プラットフォームは、[来歴の生成] と [ビルド間の分離] という 2 つのことを提供する責任があります。[ビルド レベル](levels.md#build-track) は、これらの各プロパティがどの程度満たされるかを示します。
 
-### Provenance generation
+### 来歴の生成
 
-[Provenance generation]: #provenance-generation
+[来歴の生成]: #provenance-generation
 
-The build platform is responsible for generating provenance describing how the package was produced.
+ビルド プラットフォームは、パッケージがどのように作成されたかを説明する来歴を生成する責任があります。
 
-The SLSA Build level describes the overall provenance integrity according to minimum requirements on its:
+SLSA ビルド レベルは、次の最小要件に従って、全体的な来歴の整合性を記述します。
 
--   *Completeness:* What information is contained in the provenance?
--   *Authenticity:* How strongly can the provenance be tied back to the builder?
--   *Accuracy:* How resistant is the provenance generation to tampering within the build process?
+-   *完全性:* 来歴にはどのような情報が含まれていますか?
+-   *信頼性:* 来歴は建設者とどの程度強く結び付けられますか?
+-   *精度:* 来歴生成は、ビルド プロセス内での改ざんに対してどの程度耐性がありますか?
 
 <table>
-<tr><th>Requirement<th>Description<th>L1<th>L2<th>L3
+<tr><th>要件<th>説明<th>L1<th>L2<th>L3
 
-<tr id="provenance-exists"><td>Provenance Exists<td>
+<tr id="provenance-exists"><td>来歴が存在します<td>
 
-The build process MUST generate provenance that unambiguously identifies the output package by cryptographic digest and describes how that package was produced. The format MUST be acceptable to the [package ecosystem] and/or [consumer](verifying-artifacts.md#consumer).
+ビルド プロセスは、暗号ダイジェストによって出力パッケージを明確に識別し、そのパッケージがどのように作成されたかを説明する来歴を生成しなければなりません (MUST)。形式は [パッケージ エコシステム] および/または [消費者](verifying-artifacts.md#consumer) に受け入れられなければなりません。
 
-It is RECOMMENDED to use the [SLSA Provenance] format and [associated suite] because it is designed to be interoperable, universal, and unambiguous when used for SLSA. See that format's documentation for requirements and implementation guidelines.
+[SLSA Provenance] 形式と [associated suite] は、SLSA に使用する際に相互運用可能、汎用的、および明確になるように設計されているため、使用することが推奨されます。要件と実装ガイドラインについては、その形式のドキュメントを参照してください。
 
-If using an alternate format, it MUST contain the equivalent information as SLSA Provenance at each level and SHOULD be bi-directionally translatable to SLSA Provenance.
+代替形式を使用する場合は、各レベルで SLSA 来歴と同等の情報が含まれていなければならず (MUST)、SLSA 来歴に双方向に変換可能である必要があります (SHOULD)。
 
--   *Completeness:* Best effort. The provenance at L1 SHOULD contain sufficient information to catch mistakes and simulate the user experience at higher levels in the absence of tampering. In other words, the contents of the provenance SHOULD be the same at all Build levels, but a few fields MAY be absent at L1 if they are prohibitively expensive to implement.
--   *Authenticity:* No requirements.
--   *Accuracy:* No requirements.
+-   *完全性:* ベストエフォート。L1 の来歴には、間違いを発見し、改ざんがない場合に高いレベルでユーザー エクスペリエンスをシミュレートするのに十分な情報が含まれている必要があります (SHOULD)。言い換えれば、来歴の内容はすべてのビルド レベルで同じであるべきです (SHOULD) が、実装に法外な費用がかかる場合、いくつかのフィールドが L1 に存在しなくてもよい (MAY)。
+-   *真正性:* 要件はありません。
+-   *精度:* 要件はありません。
 
-[SLSA Provenance]: provenance.md
-[associated suite]: ../../attestation-model#recommended-suite
+[SLSA 来歴]: provenance.md
+[関連スイート]: ../../attestation-model#recommended-suite
 
 <td>✓<td>✓<td>✓
-<tr id="provenance-authentic"><td>Provenance is Authentic<td>
+<tr id="provenance-authentic"><td>来歴は本物です<td>
 
-*Authenticity:* Consumers MUST be able to validate the authenticity of the provenance attestation in order to:
+*信頼性:* 消費者は、次のことを行うために、来歴証明書の信頼性を検証できなければなりません。
 
--   *Ensure integrity:* Verify that the digital signature of the provenance attestation is valid and the provenance was not tampered with after the build.
--   *Define trust:* Identify the build platform and other entities that are necessary to trust in order to trust the artifact they produced.
+-   *整合性の確保:* 来歴証明書のデジタル署名が有効であり、来歴がビルド後に改ざんされていないことを確認します。
+-   *信頼の定義:* 生成されたアーティファクトを信頼するために信頼する必要があるビルド プラットフォームとその他のエンティティを特定します。
 
-This SHOULD be through a digital signature from a private key accessible only to the build platform component that generated the provenance attestation.
+これは、来歴証明書を生成したビルド プラットフォーム コンポーネントのみがアクセスできる秘密鍵からのデジタル署名を介する必要があります (SHOULD)。
 
-While many constraints affect choice of signing methodologies, it is RECOMMENDED that build platforms use signing methodologies which improve the ability to detect and remediate key compromise, such as methods which rely on transparency logs or, when transparency isn't appropriate, time stamping services.
+署名方法の選択には多くの制約が影響しますが、ビルド プラットフォームでは、透明性ログや、透明性が適切でない場合はタイムスタンプ サービスに依存する方法など、鍵の侵害を検出して修復する能力を向上させる署名方法を使用することが推奨されます。
 
-Authenticity allows the consumer to trust the contents of the provenance attestation, such as the identity of the build platform.
+信頼性により、消費者はビルド プラットフォームの ID などの来歴証明書の内容を信頼できます。
 
-*Accuracy:* The provenance MUST be generated by the control plane (i.e. within the trust boundary [identified in the provenance]) and not by a tenant of the build platform (i.e. outside the trust boundary), except as noted below.
+*正確性:* 以下に記載する場合を除き、来歴はコントロール プレーン (つまり、[来歴で識別される] 信頼境界内) によって生成されなければならず、ビルド プラットフォームのテナント (つまり、信頼境界の外側) によって生成されることはありません。
 
--   The data in the provenance MUST be obtained from the build platform, either because the generator *is* the build platform or because the provenance generator reads the data directly from the build platform.
--   The build platform MUST have some security control to prevent tenants from tampering with the provenance. However, there is no minimum bound on the strength. The purpose is to deter adversaries who might face legal or financial risk from evading controls.
--   Exceptions for fields that MAY be generated by a tenant of the build platform:
-    -   The names and cryptographic digests of the output artifacts, i.e. `subject` in [SLSA Provenance]. See [forge output digest of the provenance](threats#forged-digest) for explanation of why this is acceptable.
-    -   Any field that is not marked as REQUIRED for Build L2. For example, `resolvedDependencies` in [SLSA Provenance] MAY be tenant-generated at Build L2. Builders SHOULD document any such cases of tenant-generated fields.
+-   来歴のデータは、ジェネレーターがビルド プラットフォームであるため、または来歴ジェネレーターがビルド プラットフォームからデータを直接読み取るため、ビルド プラットフォームから取得する必要があります。
+-   ビルド プラットフォームには、テナントによる来歴の改ざんを防ぐために、何らかのセキュリティ制御が必要です。ただし、強度に下限はありません。その目的は、法的または財務的リスクに直面する可能性のある敵対者が規制を回避するのを阻止することです。
+-   ビルド プラットフォームのテナントによって生成される可能性があるフィールドの例外:
+    -   出力アーティファクトの名前と暗号ダイジェスト、つまり [SLSA Provenance] の「件名」。これが許容される理由の説明については、[来歴の出力ダイジェストの出力](threats#forged-digest) を参照してください。
+    -   ビルド L2 に必須としてマークされていないフィールド。たとえば、[SLSA Provenance] の `resolvedDependency` は、ビルド L2 でテナント生成される場合があります (MAY)。ビルダーは、テナント生成フィールドのそのようなケースを文書化する必要があります。
 
-*Completeness:* SHOULD be complete.
+*完全性:* 完全であるべきです。
 
--   There MAY be [external parameters] that are not sufficiently captured in the provenance.
--   Completeness of resolved dependencies is best effort.
+-   来歴で十分に捕捉されていない [外部パラメータ] が存在する可能性があります。
+-   解決された依存関係の完全性はベストエフォートです。
 
 <td> <td>✓<td>✓
-<tr id="provenance-unforgeable"><td>Provenance is Unforgeable<td>
+<tr id="provenance-unforgeable"><td>来歴は偽造不可能です<td>
 
-*Accuracy:* Provenance MUST be strongly resistant to forgery by tenants.
+*精度:* 来歴はテナントによる偽造に対して強力な耐性を持たなければなりません。
 
--   Any secret material used for authenticating the provenance, for example the signing key used to generate a digital signature, MUST be stored in a secure management system appropriate for such material and accessible only to the build service account.
--   Such secret material MUST NOT be accessible to the environment running the user-defined build steps.
--   Every field in the provenance MUST be generated or verified by the build platform in a trusted control plane. The user-controlled build steps MUST NOT be able to inject or alter the contents, except as noted in [Provenance is Authentic](#provenance-authentic). (Build L3 does not require additional fields beyond those of L2.)
+-   来歴の認証に使用される秘密マテリアル (デジタル署名の生成に使用される署名キーなど) は、そのマテリアルに適した安全な管理システムに保管し、ビルド サービス アカウントのみがアクセスできるようにする必要があります。
+-   このような秘密マテリアルは、ユーザー定義のビルドステップを実行している環境からアクセスできてはなりません。
+-   来歴のすべてのフィールドは、信頼できるコントロール プレーンのビルド プラットフォームによって生成または検証されなければなりません。[Provenance は Authentic](#provenance-authentic) に記載されている場合を除き、ユーザー制御のビルド ステップでは、コンテンツを挿入したり変更したりしてはなりません (MUST NOT)。(ビルド L3 では、L2 のフィールドを超える追加のフィールドは必要ありません。)
 
-*Completeness:* SHOULD be complete.
+*完全性:* 完全であるべきです。
 
--   [External parameters] MUST be fully enumerated.
--   Completeness of resolved dependencies is best effort.
+-   [外部パラメータ] は完全に列挙する必要があります。
+-   解決された依存関係の完全性はベストエフォートです。
 
-Note: This requirement was called "non-falsifiable" in the initial [draft version (v0.1)](../v0.1/requirements.md#non-falsifiable).
+注: この要件は、最初の [draft version (v0.1)](../v0.1/requirements.md#non-falsifiable) では「反証不可能」と呼ばれていました。
 
 <td> <td> <td>✓
 </table>
 
-### Isolation strength
+### 絶縁強度
 
-[Isolation strength]: #isolation-strength
-[Isolation between builds]: #isolation-strength
+[分離強度]: #isolation-strength
+[ビルド間の分離]: #isolation-strength
 
-The build platform is responsible for isolating between builds, even within the same tenant project. In other words, how strong of a guarantee do we have that the build really executed correctly, without external influence?
+ビルド プラットフォームは、同じテナント プロジェクト内であっても、ビルド間を分離する責任があります。言い換えれば、外部の影響なしにビルドが実際に正しく実行されたという保証はどのくらい強いのでしょうか?
 
-The SLSA Build level describes the minimum bar for isolation strength. For more information on assessing a build platform's isolation strength, see [Verifying build platforms](verifying-systems.md).
+SLSA ビルド レベルは、分離強度の最小基準を示します。ビルド プラットフォームの分離強度の評価の詳細については、「ビルド プラットフォームの検証」(verifying-systems.md) を参照してください。
 
 <table>
-<tr><th>Requirement<th>Description<th>L1<th>L2<th>L3
+<tr><th>要件<th>説明<th>L1<th>L2<th>L3
 
 <tr id="hosted">
-<td>Hosted
+<td>ホスト型
 <td>
 
-All build steps ran using a hosted build platform on shared or dedicated infrastructure, not on an individual's workstation.
+すべてのビルド ステップは、個人のワークステーションではなく、共有インフラストラクチャまたは専用インフラストラクチャ上のホストされたビルド プラットフォームを使用して実行されました。
 
-Examples: GitHub Actions, Google Cloud Build, Travis CI.
+例: GitHub Actions, Google Cloud Build, Travis CI.
 
 <td> <td>✓<td>✓
-<tr id="isolated">
-<td>Isolated
+<tr id="孤立">
+<td>孤立
 <td>
 
-The build platform ensured that the build steps ran in an isolated environment, free of unintended external influence. In other words, any external influence on the build was specifically requested by the build itself. This MUST hold true even between builds within the same tenant project.
+ビルド プラットフォームにより、意図しない外部からの影響を受けずに、隔離された環境でビルド ステップが実行されることが保証されました。言い換えれば、ビルドに対する外部の影響は、ビルド自体によって明確に要求されたものです。これは、同じテナント プロジェクト内のビルド間でも当てはまらなければなりません。
 
-The build platform MUST guarantee the following:
+ビルド プラットフォームは次のことを保証する必要があります。
 
--   It MUST NOT be possible for a build to access any secrets of the build platform, such as the provenance signing key, because doing so would compromise the authenticity of the provenance.
--   It MUST NOT be possible for two builds that overlap in time to influence one another, such as by altering the memory of a different build process running on the same machine.
--   It MUST NOT be possible for one build to persist or influence the build environment of a subsequent build. In other words, an ephemeral build environment MUST be provisioned for each build.
--   It MUST NOT be possible for one build to inject false entries into a build cache used by another build, also known as "cache poisoning". In other words, the output of the build MUST be identical whether or not the cache is used.
--   The build platform MUST NOT open services that allow for remote influence unless all such interactions are captured as `externalParameters` in the provenance.
+-   来歴の信憑性が損なわれるため、ビルドが来歴署名キーなどのビルド プラットフォームの秘密にアクセスすることは不可能であってはなりません。
+-   同じマシン上で実行されている別のビルド プロセスのメモリを変更するなど、時間的に重なる 2 つのビルドが相互に影響を及ぼしてはなりません。
+-   1 つのビルドが持続したり、後続のビルドのビルド環境に影響を与えたりすることはできません。言い換えれば、一時的なビルド環境はビルドごとにプロビジョニングする必要があります。
+-   あるビルドが、別のビルドで使用されるビルド キャッシュに誤ったエントリを挿入すること (「キャッシュ ポイズニング」とも呼ばれる) を起こしてはなりません。言い換えれば、キャッシュが使用されるかどうかに関係なく、ビルドの出力は同一でなければなりません。
+-   ビルド プラットフォームは、そのようなすべての対話が来歴の `externalParameters` としてキャプチャされない限り、リモート影響を可能にするサービスを開いてはなりません (MUST NOT)。
 
-There are no sub-requirements on the build itself. Build L3 is limited to ensuring that a well-intentioned build runs securely. It does not require that a build platform prevents a producer from performing a risky or insecure build. In particular, the "Isolated" requirement does not prohibit a build from calling out to a remote execution service or a "self-hosted runner" that is outside the trust boundary of the build platform.
+ビルド自体にはサブ要件はありません。ビルド L3 は、善意のビルドが安全に実行されることを保証することに限定されています。ビルド プラットフォームがプロデューサーによる危険なビルドや安全でないビルドの実行を妨げる必要はありません。特に、「分離」要件は、ビルドがビルド プラットフォームの信頼境界の外側にあるリモート実行サービスまたは「セルフホスト ランナー」を呼び出すことを禁止するものではありません。
 
-NOTE: This requirement was split into "Isolated" and "Ephemeral Environment" in the initial [draft version (v0.1)](../v0.1/requirements.md).
+注: この要件は、初期の [ドラフト バージョン (v0.1)](../v0.1/requirements.md) では「分離環境」と「一時環境」に分割されていました。
 
-NOTE: This requirement is not to be confused with "Hermetic", which roughly means that the build ran with no network access. Such a requirement requires substantial changes to both the build platform and each individual build, and is considered in the [future directions](future-directions.md).
+注: この要件を「密閉」と混同しないでください。これは、ネットワーク アクセスなしでビルドが実行されたことを大まかに意味します。このような要件には、ビルド プラットフォームと個々のビルドの両方に大幅な変更が必要であり、[将来の方向性](future-directions.md) で検討されています。
 
 <td> <td> <td>✓
 </table>
 
-[external parameters]: provenance.md#externalParameters
-[identified in the provenance]: provenance.md#model
-[package ecosystem]: verifying-artifacts.md#package-ecosystem
+[外部パラメータ]: provenance.md#externalParameters
+[来歴で特定]: provenance.md#model
+[パッケージ エコシステム]: verifying-artifacts.md#package-ecosystem

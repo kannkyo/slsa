@@ -1,6 +1,6 @@
 ---
-title: Terminology
-description: Before diving into the SLSA specification levels, we need to establish a core set of terminology and models to describe what we're protecting.
+title: 用語
+description: SLSA 仕様レベルに入る前に、保護対象を説明するための用語とモデルの中核セットを確立する必要があります。
 ---
 <!--- Note on updating docs:
 * Using terms such as "developer," "maintainer," "producer," "author," and "publisher" interchangeably can cause confusion.
@@ -9,118 +9,118 @@ description: Before diving into the SLSA specification levels, we need to establ
   * For consistency: Whenever possible, default to "platform." Instead of using "service," a reference to a "hosted platform" should be used. A reference to some specific software or tools internal to a platform can be made with "platform component" unless there is a more appropriate definition to use directly like "control plane." External self-described services and systems can continue to be called by these terms.
 --->
 
-Before diving into the [SLSA Levels](levels.md), we need to establish a core set of terminology and models to describe what we're protecting.
+[SLSA レベル](levels.md) に入る前に、何を保護しているのかを説明するための用語とモデルの中核セットを確立する必要があります。
 
-## Software supply chain
+## ソフトウェア サプライ チェーン
 
-SLSA's framework addresses every step of the software supply chain - the sequence of steps resulting in the creation of an artifact. We represent a supply chain as a [directed acyclic graph] of sources, builds, dependencies, and packages. One artifact's supply chain is a combination of its dependencies' supply chains plus its own sources and builds.
+SLSA のフレームワークは、ソフトウェア サプライ チェーンのあらゆるステップ、つまり成果物の作成につながる一連のステップに対応します。サプライ チェーンをソース、ビルド、依存関係、パッケージの [有向非循環グラフ] として表します。1 つのアーティファクトのサプライ チェーンは、その依存関係のサプライ チェーンに独自のソースとビルドを加えたものです。
 
-[directed acyclic graph]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
+[有向非巡回グラフ]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
 
-![Software Supply Chain Model](images/supply-chain-model.svg)
+![ソフトウェア サプライ チェーン モデル](images/supply-chain-model.svg)
 
-| Term        | Description                                                                                                                                                                 | Example                                                                                                                                                                                     |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Artifact    | An immutable blob of data; primarily refers to software, but SLSA can be used for any artifact.                                                                             | A file, a git commit, a directory of files (serialized in some way), a container image, a firmware image.                                                                                   |
-| Attestation | An authenticated statement (metadata) about a software artifact or collection of software artifacts.                                                                        | A signed [SLSA Provenance] file.                                                                                                                                                            |
-| Source      | Artifact that was directly authored or reviewed by persons, without modification. It is the beginning of the supply chain; we do not trace the provenance back any further. | Git commit (source) hosted on GitHub (platform).                                                                                                                                            |
-| [Build]     | Process that transforms a set of input artifacts into a set of output artifacts. The inputs may be sources, dependencies, or ephemeral build outputs.                       | .travis.yml (process) run by Travis CI (platform).                                                                                                                                          |
-| [Package]   | Artifact that is "published" for use by others. In the model, it is always the output of a build process, though that build process can be a no-op.                         | Docker image (package) distributed on DockerHub (platform). A ZIP file containing source code is a package, not a source, because it is built from some other source, such as a git commit. |
-| Dependency  | Artifact that is an input to a build process but that is not a source. In the model, it is always a package.                                                                | Alpine package (package) distributed on Alpine Linux (platform).                                                                                                                            |
+| 用語             | 説明                                                                                                                                                   | 例                                                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| アーティファクト | 不変のデータの塊。主にソフトウェアを指しますが、SLSA はあらゆるアーティファクトに使用できます。                                                        | ファイル、git コミット、ファイルのディレクトリ (何らかの方法でシリアル化された)、コンテナー イメージ、ファームウェア イメージ。                                                               |
+| 証明書           | ソフトウェア アーティファクトまたはソフトウェア アーティファクトのコレクションに関する認証されたステートメント (メタデータ)。                          | 署名された [SLSA Provenance] ファイル。                                                                                                                                                       |
+| 出典             | 変更を加えることなく、人によって直接作成またはレビューされた成果物。それはサプライチェーンの始まりです。これ以上出所を遡ることはしません。             | GitHub (プラットフォーム) でホストされている Git コミット (ソース)。                                                                                                                          |
+| [ビルド]         | 一連の入力成果物を一連の出力成果物に変換するプロセス。入力は、ソース、依存関係、または一時的なビルド出力である場合があります。                         | .travis.yml (プロセス) Travis CI (プラットフォーム) によって実行されます。                                                                                                                    |
+| [パッケージ]     | 他人が使用するために「公開」されたアーティファクト。モデルでは、これは常にビルド プロセスの出力ですが、ビルド プロセスが何も行われない場合もあります。 | DockerHub（プラットフォーム）上で配布されるDockerイメージ（パッケージ）。ソース コードを含む ZIP ファイルは、git コミットなどの他のソースからビルドされるため、ソースではなくパッケージです。 |
+| 依存関係         | ビルド プロセスへの入力ではあるが、ソースではないアーティファクト。モデルでは、それは常にパッケージです。                                              | Alpine Linux (プラットフォーム) 上で配布される Alpine パッケージ (パッケージ)。                                                                                                               |
 
-[build]: #build-model
-[package]: #package-model
-[SLSA Provenance]: /provenance/v1
+[ビルド]: #build-model
+[パッケージ]: #package-model
+[SLSA 来歴]: /provenance/v1
 
-### Roles
+### 役割
 
-Throughout the specification, you will see reference to the following roles that take part in the software supply chain. Note that in practice a role may be filled by more than one person or an organization. Similarly, a person or organization may act as more than one role in a particular software supply chain.
+仕様全体を通じて、ソフトウェア サプライ チェーンに参加する次の役割への言及が見られます。実際には、役割は複数の個人または組織によって満たされる場合があることに注意してください。同様に、個人または組織は、特定のソフトウェア サプライ チェーン内で複数の役割を担う場合があります。
 
-| Role                    | Description                                                                                                                                                            | Examples                                                                                              |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Producer                | A party who creates software and provides it to others. Producers are often also consumers.                                                                            | An open source project's maintainers. A software vendor.                                              |
-| Verifier                | A party who inspect an artifact's provenance to determine the artifact's authenticity.                                                                                 | A business's software ingestion system. A programming language ecosystem's package registry.          |
-| Consumer                | A party who uses software provided by a producer. The consumer may verify provenance for software they consume or delegate that responsibility to a separate verifier. | A developer who uses open source software distributions. A business that uses a point of sale system. |
-| Infrastructure provider | A party who provides software or services to other roles.                                                                                                              | A package registry's maintainers. A build platform's maintainers.                                     |
+| 役割                 | 説明                                                                                                                                               | 例                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| プロデューサー       | ソフトウェアを作成し、他者に提供する者。生産者は消費者でもあることがよくあります。                                                                 | オープンソース プロジェクトのメンテナ。ソフトウェアベンダー。                                       |
+| 検証者               | アーティファクトの出所を検査して、アーティファクトの信頼性を判断する当事者。                                                                       | 企業のソフトウェア取り込みシステム。プログラミング言語エコシステムのパッケージ レジストリ。         |
+| 消費者               | 製作者が提供するソフトウェアを使用する当事者。消費者は、消費するソフトウェアの出所を検証することも、その責任を別の検証者に委任することもできます。 | オープンソース ソフトウェア ディストリビューションを使用する開発者。POSシステムを利用したビジネス。 |
+| インフラプロバイダー | 他の役割にソフトウェアまたはサービスを提供する当事者。                                                                                             | パッケージ レジストリのメンテナ。ビルド プラットフォームのメンテナ。                                |
 
-### Build model
+### モデルの構築
 
-<p align="center"><img src="images/build-model.svg" alt="Model Build"></p>
+<p align="center"><img src="images/build-model.svg" alt="モデル ビルド"></p>
 
-We model a build as running on a multi-tenant *build platform*, where each execution is independent.
+ビルドは、各実行が独立したマルチテナント *ビルド プラットフォーム* 上で実行されるものとしてモデル化されます。
 
-1.  A tenant invokes the build by specifying *external parameters* through an *interface*, either directly or via some trigger. Usually, at least one of these external parameters is a reference to a *dependency*. (External parameters are literal values while dependencies are artifacts.)
-2.  The build platform's *control plane* interprets these external parameters, fetches an initial set of dependencies, initializes a *build environment*, and then starts the execution within that environment.
-3.  The build then performs arbitrary steps, which might include fetching additional dependencies, and then produces one or more *output* artifacts. The steps within the build environment are under the tenant's control. The build platform isolates build environments from one another to some degree (which is measured by the SLSA Build Level).
-4.  Finally, for SLSA Build L2+, the control plane outputs *provenance* describing this whole process.
+1. テナントは、直接または何らかのトリガーを介して *インターフェイス* を介して *外部パラメーター* を指定することにより、ビルドを呼び出します。通常、これらの外部パラメータの少なくとも 1 つは *依存関係* への参照です。(外部パラメーターはリテラル値ですが、依存関係は成果物です。)
+2. ビルド プラットフォームの *コントロール プレーン* は、これらの外部パラメーターを解釈し、依存関係の初期セットをフェッチし、*ビルド環境* を初期化し、その環境内で実行を開始します。
+3. その後、ビルドは追加の依存関係の取得などの任意の手順を実行し、1 つ以上の *出力* アーティファクトを生成します。ビルド環境内のステップはテナントの制御下にあります。ビルド プラットフォームは、ビルド環境を互いにある程度分離します (これは SLSA ビルド レベルによって測定されます)。
+4. 最後に、SLSA Build L2+ の場合、コントロール プレーンはこのプロセス全体を説明する *来歴* を出力します。
 
-Notably, there is no formal notion of "source" in the build model, just external parameters and dependencies. Most build platforms have an explicit "source" artifact to build from, which is often a git repository; in the build model, the reference to this artifact is an external parameter while the artifact itself is a dependency.
+特に、ビルド モデルには「ソース」という正式な概念はなく、外部パラメーターと依存関係だけが存在します。ほとんどのビルド プラットフォームには、ビルド元となる明示的な「ソース」アーティファクトがあり、これは多くの場合 git リポジトリです。ビルド モデルでは、このアーティファクトへの参照は外部パラメーターですが、アーティファクト自体は依存関係です。
 
-For examples of how this model applies to real-world build platforms, see [index of build types](/provenance/v1#index-of-build-types).
+このモデルが実際のビルド プラットフォームにどのように適用されるかの例については、[ビルド タイプのインデックス](/provenance/v1#index-of-build-types) を参照してください。
 
-| Primary Term        | Description                                                                                                                                                                                                                   |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Platform            | System that allows tenants to run builds. Technically, it is the transitive closure of software and services that must be trusted to faithfully execute the build. It includes software, hardware, people, and organizations. |
-| Admin               | A privileged user with administrative access to the platform, potentially allowing them to tamper with builds or the control plane.                                                                                           |
-| Tenant              | An untrusted user that builds an artifact on the platform. The tenant defines the build steps and external parameters.                                                                                                        |
-| Control plane       | Build platform component that orchestrates each independent build execution and produces provenance. The control plane is managed by an admin and trusted to be outside the tenant's control.                                 |
-| Build               | Process that converts input sources and dependencies into output artifacts, defined by the tenant and executed within a single build environment on a platform.                                                               |
-| Steps               | The set of actions that comprise a build, defined by the tenant.                                                                                                                                                              |
-| Build environment   | The independent execution context in which the build runs, initialized by the control plane. In the case of a distributed build, this is the collection of all such machines/containers/VMs that run steps.                   |
-| Build caches        | An intermediate artifact storage managed by the platform that maps intermediate artifacts to their explicit inputs. A build may share build caches with any subsequent build running on the platform.                         |
-| External parameters | The set of top-level, independent inputs to the build, specified by a tenant and used by the control plane to initialize the build.                                                                                           |
-| Dependencies        | Artifacts fetched during initialization or execution of the build process, such as configuration files, source artifacts, or build tools.                                                                                     |
-| Outputs             | Collection of artifacts produced by the build.                                                                                                                                                                                |
-| Provenance          | Attestation (metadata) describing how the outputs were produced, including identification of the platform and external parameters.                                                                                            |
+| 初等用語             | 説明                                                                                                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| プラットフォーム     | テナントがビルドを実行できるシステム。技術的には、ビルドを忠実に実行するには信頼する必要があるソフトウェアとサービスの推移的クロージャです。これには、ソフトウェア、ハードウェア、人、組織が含まれます。                       |
+| 管理者               | プラットフォームへの管理アクセス権を持つ特権ユーザー。ビルドやコントロール プレーンの改ざんを許可される可能性があります。                                                                                                      |
+| テナント             | プラットフォーム上にアーティファクトを構築する信頼できないユーザー。テナントはビルドステップと外部パラメータを定義します。                                                                                                     |
+| コントロールプレーン | それぞれの独立したビルド実行を調整し、来歴を生成するビルド プラットフォーム コンポーネント。コントロール プレーンは管理者によって管理され、テナントの制御外にあると信頼されています。                                          |
+| ビルド               | 入力ソースと依存関係を出力アーティファクトに変換するプロセス。テナントによって定義され、プラットフォーム上の単一のビルド環境内で実行されます。                                                                                 |
+| ステップ             | テナントによって定義された、ビルドを構成する一連のアクション。                                                                                                                                                                 |
+| 構築環境             | ビルドが実行される独立した実行コンテキスト。コントロール プレーンによって初期化されます。分散ビルドの場合、これはステップを実行するすべてのマシン/コンテナ/VM のコレクションです。                                             |
+| キャッシュを構築する | プラットフォームによって管理される中間アーティファクト ストレージ。中間アーティファクトを明示的な入力にマッピングします。ビルドは、プラットフォーム上で実行されている後続のビルドとビルド キャッシュを共有する場合があります。 |
+| 外部パラメータ       | ビルドへのトップレベルの独立した入力のセット。テナントによって指定され、ビルドを初期化するためにコントロール プレーンによって使用されます。                                                                                    |
+| 依存関係             | 構成ファイル、ソースアーティファクト、ビルドツールなど、ビルドプロセスの初期化または実行中にフェッチされたアーティファクト。                                                                                                   |
+| 出力                 | ビルドによって生成されたアーティファクトのコレクション。                                                                                                                                                                       |
+| 来歴                 | プラットフォームと外部パラメータの識別を含む、出力がどのように生成されたかを説明する証明書 (メタデータ)。                                                                                                                      |
 
-<details><summary>Ambiguous terms to avoid</summary>
+<details><summary>避けるべきあいまいな用語</summary>
 
--   *Build recipe:* Could mean *external parameters,* but may include concrete steps of how to perform a build. To avoid implementation details, we don't define this term, but always use "external parameters" which is the interface to a build platform. Similar terms are *build configuration source* and *build definition*.
--   *Builder:* Usually means *build platform*, but might be used for *build environment*, the user who invoked the build, or a build tool from *dependencies*. To avoid confusion, we always use "build platform". The only exception is in the [provenance](/provenance/v1), where `builder` is used as a more concise field name.
-
-</details>
-
-### Package model
-
-Software is distributed in identifiable units called <dfn>packages</dfn> according the rules and conventions of a <dfn>package ecosystem</dfn>. Examples of formal ecosystems include [Python/PyPA](https://www.pypa.io), [Debian/Apt](https://wiki.debian.org/DebianRepository/Format), and [OCI](https://github.com/opencontainers/distribution-spec), while examples of informal ecosystems include links to files on a website or distribution of first-party software within a company.
-
-Abstractly, a consumer locates software within an ecosystem by asking a <dfn>package registry</dfn> to resolve a mutable <dfn>package name</dfn> into an immutable <dfn>package artifact</dfn>.[^label] To <dfn>publish</dfn> a package artifact, the software producer asks the registry to update this mapping to resolve to the new artifact. The registry represents the entity or entities with the power to alter what artifacts are accepted by consumers for a given package name. For example, if consumers only accept packages signed by a particular public key, then it is access to that public key that serves as the registry.
-
-The package name is the primary security boundary within a package ecosystem. Different package names represent materially different pieces of software---different owners, behaviors, security properties, and so on. Therefore, **the package name is the primary unit being protected in SLSA**. It is the primary identifier to which consumers attach expectations.
-
-[^label]: This resolution might include a version number, label, or some other selector in addition to the package name, but that is not important to SLSA.
-
-| Term                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Package                | An identifiable unit of software intended for distribution, ambiguously meaning either an "artifact" or a "package name". Only use this term when the ambiguity is acceptable or desirable.                                                                                                                                                                                                                                                                                                                                       |
-| Package artifact       | A file or other immutable object that is intended for distribution.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| Package ecosystem      | A set of rules and conventions governing how packages are distributed, including how clients resolve a package name into one or more specific artifacts.                                                                                                                                                                                                                                                                                                                                                                          |
-| Package manager client | Client-side tooling to interact with a package ecosystem.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Package name           | <p>The primary identifier for a mutable collection of artifacts that all represent different versions of the same software. This is the primary identifier that consumers use to obtain the software.<p>A package name is specific to an ecosystem + registry, has a maintainer, is more general than a specific hash or version, and has a "correct" source location. A package ecosystem may group package names into some sort of hierarchy, such as the Group ID in Maven, though SLSA does not have a special term for this. |
-| Package registry       | An entity responsible for mapping package names to artifacts within a packaging ecosystem. Most ecosystems support multiple registries, usually a single global registry and multiple private registries.                                                                                                                                                                                                                                                                                                                         |
-| Publish [a package]    | Make an artifact available for use by registering it with the package registry. In technical terms, this means associating an artifact to a package name. This does not necessarily mean making the artifact fully public; an artifact may be published for only a subset of users, such as internal testing or a closed beta.                                                                                                                                                                                                    |
-
-<details><summary>Ambiguous terms to avoid</summary>
-
--   *Package repository:* Could mean either package registry or package name, depending on the ecosystem. To avoid confusion, we always use "repository" exclusively to mean "source repository", where there is no ambiguity.
--   *Package manager* (without "client"): Could mean either package ecosystem, package registry, or client-side tooling.
+- *ビルド レシピ:* *外部パラメーター* を意味する可能性がありますが、ビルドを実行する方法の具体的な手順が含まれる場合があります。実装の詳細を避けるため、この用語は定義しませんが、ビルド プラットフォームへのインターフェイスである「外部パラメータ」を常に使用します。同様の用語として、*ビルド構成ソース* および *ビルド定義* があります。
+- *Builder:* 通常は *ビルド プラットフォーム* を意味しますが、*ビルド環境*、ビルドを呼び出したユーザー、または *依存関係* からのビルド ツールに使用される場合もあります。混乱を避けるために、私たちは常に「プラットフォームの構築」を使用します。唯一の例外は [provenance](/provenance/v1) です。ここでは、`builder` がより簡潔なフィールド名として使用されます。
 
 </details>
 
-### Mapping to real-world ecosystems
+### パッケージモデル
 
-Most real-world ecosystems fit the package model above but use different terms. The table below attempts to document how various ecosystems map to the SLSA Package model. There are likely mistakes and omissions; corrections and additions are welcome!
+ソフトウェアは、<dfn>パッケージ エコシステム</dfn>のルールと規約に従って、<dfn>パッケージ</dfn>と呼ばれる識別可能な単位で配布されます。正式なエコシステムの例には、[Python/PyPA](https://www.pypa.io)、[Debian/Apt](https://wiki.debian.org/DebianRepository/Format)、[OCI](https: //github.com/opencontainers/distribution-spec)、非公式エコシステムの例には、Web サイト上のファイルへのリンクや企業内でのファーストパーティ ソフトウェアの配布などが含まれます。
+
+抽象的には、消費者は、<dfn>パッケージ レジストリ</dfn>に変更可能な <dfn>パッケージ名</dfn>を不変の<dfn>パッケージ アーティファクト</dfn>に解決するように依頼することにより、エコシステム内のソフトウェアを見つけます。[^label] ] パッケージ アーティファクトを<dfn>公開</dfn>するには、ソフトウェア プロデューサーはレジストリにこのマッピングを更新して新しいアーティファクトに解決するように要求します。レジストリは、特定のパッケージ名に対して消費者が受け入れるアーティファクトを変更する権限を持つエンティティを表します。たとえば、消費者が特定の公開キーで署名されたパッケージのみを受け入れる場合、レジストリとして機能するのはその公開キーへのアクセスです。
+
+パッケージ名は、パッケージ エコシステム内の主要なセキュリティ境界です。異なるパッケージ名は、実質的に異なるソフトウェア部分、つまり異なる所有者、動作、セキュリティ特性などを表します。したがって、**パッケージ名は SLSA で保護されるプライマリ ユニットです**。これは、消費者が期待する主な識別子です。
+
+[^label]: この解決には、パッケージ名に加えて、バージョン番号、ラベル、またはその他のセレクターが含まれる場合がありますが、SLSA にとっては重要ではありません。
+
+| 用語                               | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| パッケージ                         | 配布を目的としたソフトウェアの識別可能な単位。「成果物」または「パッケージ名」のいずれかを曖昧に意味します。この用語は、曖昧さが許容されるか望ましい場合にのみ使用してください。                                                                                                                                                                                                                                                                                                                   |
+| パッケージアーティファクト         | 配布を目的としたファイルまたはその他の不変オブジェクト。                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| パッケージエコシステム             | クライアントがパッケージ名を 1 つ以上の特定のアーティファクトに解決する方法など、パッケージの配布方法を管理する一連の規則と規則。                                                                                                                                                                                                                                                                                                                                                                  |
+| パッケージマネージャークライアント | パッケージ エコシステムと対話するためのクライアント側ツール。                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| パッケージ名                       | <p>同じソフトウェアの異なるバージョンをすべて表す、変更可能なアーティファクトのコレクションの主な識別子。これは、消費者がソフトウェアを入手するために使用する主な識別子です。<p>パッケージ名はエコシステム + レジストリに固有であり、メンテナーがあり、特定のハッシュやバージョンよりも一般的で、「正しい」ソースの場所があります。パッケージ エコシステムでは、パッケージ名を Maven のグループ ID などの何らかの階層にグループ化する場合がありますが、SLSA にはこれを表す特別な用語がありません。 |
+| パッケージレジストリ               | パッケージング エコシステム内のアーティファクトにパッケージ名をマッピングする責任を負うエンティティ。ほとんどのエコシステムは複数のレジストリ (通常は 1 つのグローバル レジストリと複数のプライベート レジストリ) をサポートします。                                                                                                                                                                                                                                                               |
+| [パッケージ] を発行する            | アーティファクトをパッケージ レジストリに登録して、アーティファクトを使用できるようにします。技術用語では、これはアーティファクトをパッケージ名に関連付けることを意味します。これは必ずしもアーティファクトを完全に公開することを意味するわけではありません。アーティファクトは、内部テストやクローズド ベータなど、一部のユーザーに対してのみ公開される場合があります。                                                                                                                           |
+
+<details><summary>避けるべきあいまいな用語</summary>
+
+- *パッケージ リポジトリ:* エコシステムに応じて、パッケージ レジストリまたはパッケージ名のいずれかを意味します。混乱を避けるために、曖昧さがない限り、常に「ソース リポジトリ」を意味するためにのみ「リポジトリ」を使用します。
+- *パッケージ マネージャー* (「クライアント」なし): パッケージ エコシステム、パッケージ レジストリ、またはクライアント側ツールのいずれかを意味します。
+
+</details>
+
+### 現実世界のエコシステムへのマッピング
+
+現実世界のほとんどのエコシステムは上記のパッケージ モデルに適合しますが、異なる用語を使用します。以下の表は、さまざまなエコシステムが SLSA パッケージ モデルにどのようにマッピングされるかを文書化しようとしています。間違いや省略がある可能性があります。修正や追加も大歓迎です！
 
 <!-- Please keep this list sorted alphabetically within each section. -->
 
 <table>
   <tr>
-    <th>Package ecosystem
-    <th>Package registry
-    <th>Package name
-    <th>Package artifact
+    <th>パッケージエコシステム
+    <th>パッケージレジストリ
+    <th>パッケージ名
+    <th>パッケージアーティファクト
   <tr>
-    <td colspan=4><em>Languages</em>
+    <tdcolspan=4><em>言語</em>
   <tr>
     <td><a href="https://doc.rust-lang.org/cargo/appendix/glossary.html">Cargo</a> (Rust)
     <td><a href="https://doc.rust-lang.org/cargo/appendix/glossary.html#registry">Registry</a>
@@ -157,7 +157,7 @@ Most real-world ecosystems fit the package model above but use different terms. 
     <td><a href="https://packaging.python.org/en/latest/glossary/#term-Project">Project Name</a>
     <td><a href="https://packaging.python.org/en/latest/glossary/#term-Distribution-Package">Distribution</a>
   <tr>
-    <td colspan=4><em>Operating systems</em>
+    <tdcolspan=4><em>オペレーティング システム</em>
   <tr>
     <td><a href="https://wiki.debian.org/Teams/Dpkg">Dpkg </a> (e.g. Debian)
     <td><em>?</em>
@@ -189,7 +189,7 @@ Most real-world ecosystems fit the package model above but use different terms. 
     <td><a href="https://nixos.org/manual/nix/stable/glossary.html#gloss-store-object">Store Object</a>?
     <td>Package or <a href="https://nixos.org/manual/nix/stable/glossary.html#gloss-derivation">Derivation</a>
   <tr>
-    <td colspan=4><em>Storage systems</em>
+    <td colspan=4><em>ストレージ システム</em>
   <tr>
     <td><a href="https://cloud.google.com/storage/docs/key-terms">GCS</a>
     <td><em>n/a</em>
@@ -214,42 +214,42 @@ Most real-world ecosystems fit the package model above but use different terms. 
     <td><em>n/a</em>
 </table>
 
-Notes:
+ノート：
 
--   Go uses a significantly different distribution model than other ecosystems. In go, the package name is a source repository URL. While clients can fetch directly from that URL---in which case there is no "package" or "registry"---they usually fetch a zip file from a *module proxy*. The module proxy acts as both a builder (by constructing the package artifact from source) and a registry (by mapping package name to package artifact). People trust the module proxy because builds are independently reproducible and a *checksum database* guarantees that all clients receive the same artifact for a given URL.
+- Go は、他のエコシステムとは大きく異なる配布モデルを使用します。go では、パッケージ名はソース リポジトリ URL です。クライアントはその URL から直接フェッチすることもできますが (この場合、「パッケージ」や「レジストリ」はありません)、通常は *モジュール プロキシ* から zip ファイルをフェッチします。モジュール プロキシは、ビルダー (ソースからパッケージ アーティファクトを構築することによって) とレジストリ (パッケージ名をパッケージ アーティファクトにマッピングすることによって) の両方として機能します。ビルドは独立して再現可能であり、*チェックサム データベース* により、すべてのクライアントが特定の URL に対して同じアーティファクトを受け取ることが保証されるため、人々はモジュール プロキシを信頼します。
 
-### Verification model
+### 検証モデル
 
-Verification in SLSA is performed in two ways. Firstly, the build platform is certified to ensure conformance with the requirements at the level claimed by the build platform. This certification should happen on a recurring cadence with the outcomes published by the platform operator for their users to review and make informed decisions about which builders to trust.
+SLSA での検証は 2 つの方法で実行されます。まず、ビルド プラットフォームは、ビルド プラットフォームが要求するレベルでの要件への準拠を保証するために認定されます。この認定は、ユーザーがレビューし、どのビルダーを信頼するかについて情報に基づいた決定を下せるように、プラットフォーム オペレーターによって公開される結果とともに定期的に行われる必要があります。
 
-Secondly, artifacts are verified to ensure they meet the producer defined expectations of where the package source code was retrieved from and on what build platform the package was built.
+次に、アーティファクトが検証され、パッケージのソース コードがどこから取得され、どのビルド プラットフォームでパッケージがビルドされたかについて、プロデューサーが定義した期待を満たしていることが確認されます。
 
-![Verification Model](images/verification-model.svg)
+![検証モデル](images/verification-model.svg)
 
-| Term                         | Description                                                                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Expectations                 | A set of constraints on the package's provenance metadata. The package producer sets expectations for a package, whether explicitly or implicitly. |
-| Provenance verification      | Artifacts are verified by the package ecosystem to ensure that the package's expectations are met before the package is used.                      |
-| Build platform certification | [Build platforms are certified](verifying-systems.md) for their conformance to the SLSA requirements at the stated level.                          |
+| 用語                       | 説明                                                                                                                                              |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 期待                       | パッケージの出所メタデータに対する一連の制約。パッケージプロデューサーは、明示的または暗黙的に、パッケージに対する期待を設定します。              |
+| 出所の検証                 | アーティファクトは、パッケージが使用される前にパッケージの期待が満たされていることを確認するために、パッケージ エコシステムによって検証されます。 |
+| ビルドプラットフォーム認定 | [ビルド プラットフォームは、指定されたレベルで SLSA 要件に準拠していることが認定されています](verifying-systems.md)。                             |
 
-The examples below suggest some ways that expectations and verification may be implemented for different, broadly defined, package ecosystems.
+以下の例は、さまざまな広義のパッケージ エコシステムに対して期待と検証を実装できるいくつかの方法を示しています。
 
-<details><summary>Example: Small software team</summary>
+<details><summary>例: 小規模なソフトウェア チーム</summary>
 
-| Term                         | Example                                                                                                                                                                                    |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Expectations                 | Defined by the producer's security personnel and stored in a database.                                                                                                                     |
-| Provenance verification      | Performed automatically on cluster nodes before execution by querying the expectations database.                                                                                           |
-| Build platform certification | The build platform implementer follows secure design and development best practices, does annual penetration testing exercises, and self-certifies their conformance to SLSA requirements. |
+| 用語                       | 例                                                                                                                                            |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 期待                       | プロデューサーのセキュリティ担当者によって定義され、データベースに保存されます。                                                              |
+| 出所の検証                 | 実行前に期待値データベースにクエリを実行することにより、クラスター ノード上で自動的に実行されます。                                           |
+| ビルドプラットフォーム認定 | ビルド プラットフォームの実装者は、安全な設計と開発のベスト プラクティスに従い、毎年侵入テストを実施し、SLSA 要件への適合性を自己認証します。 |
 
 </details>
 
-<details><summary>Example: Open source language distribution</summary>
+<details><summary>例: オープンソース言語の配布</summary>
 
-| Term                         | Example                                                                                                                                                                                                    |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Expectations                 | Defined separately for each package and stored in the package registry.                                                                                                                                    |
-| Provenance verification      | The language distribution registry verifies newly uploaded packages meet expectations before publishing them. Further, the package manager client also verifies expectations prior to installing packages. |
-| Build platform certification | Performed by the language ecosystem packaging authority.                                                                                                                                                   |
+| 用語                       | 例                                                                                                                                                                                                         |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 期待                       | パッケージごとに個別に定義され、パッケージ レジストリに保存されます。                                                                                                                                      |
+| 出所の検証                 | 言語配布レジストリは、新しくアップロードされたパッケージが公開前に期待を満たしていることを検証します。さらに、パッケージ マネージャー クライアントは、パッケージをインストールする前に期待値も検証します。 |
+| ビルドプラットフォーム認定 | 言語エコシステムのパッケージ化当局によって実行されます。                                                                                                                                                   |
 
 </details>
